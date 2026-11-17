@@ -31,8 +31,8 @@ $consultas = Consulta::listar();
         <tbody>
             <?php foreach ($consultas as $consulta) { ?>
                 <tr>
-                    <td><?= htmlspecialchars($consulta->paciente_id) ?></td>
-                    <td><?= htmlspecialchars($consulta->dentista_id) ?></td>
+                    <td><?= htmlspecialchars($consulta->paciente_id->nome) ?></td>
+                    <td><?= htmlspecialchars($consulta->dentista_id->nome) ?></td>
                     <td><?= date("d/m/Y H:i", strtotime($consulta->data_hora)) ?></td>
                     <td>R$ <?= number_format($consulta->valor_total, 2, ',', '.') ?></td>
                     <td>R$ <?= number_format($consulta->valor_pago, 2, ',', '.') ?></td>
