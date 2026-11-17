@@ -50,8 +50,8 @@ class Consulta{
     public static function listar($where = null, $order = null, $limit = null){
         $consultas = (new DataBase('consulta'))->select($where, $order, $limit);
         foreach($consultas as $consulta){
-           $consulta->paciente = (new DataBase('paciente'))->select('id = '.$consulta->paciente_id)->fetchObject(PDO::FETCH_CLASS);
-           $consulta->dentista = (new DataBase('dentista'))->select('id = '.$consulta->dentista_id)->fetchObject(PDO::FETCH_CLASS);
+           $consulta->paciente = (new DataBase('paciente'))->select('id = '.$consulta->paciente_id)->fetchALL(PDO::FETCH_CLASS);
+           $consulta->dentista = (new DataBase('dentista'))->select('id = '.$consulta->dentista_id)->fetchALL(PDO::FETCH_CLASS);
                 
             return $consultas->fetchAll(PDO::FETCH_CLASS, self::class);
         }
