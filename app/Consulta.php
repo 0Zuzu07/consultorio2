@@ -14,10 +14,7 @@ class Consulta{
     public $procedimentos_arealizar;
     public $descricao;
     public $medicacao;
-    // Campos extras, preenchidos só na listagem (vêm do JOIN)
-    public $paciente_nome;
-    public $dentista_nome;
-
+   
     public function cadastrar(){
         $db = new DataBase('consulta');
         $this->id = $db->insert([
@@ -50,13 +47,14 @@ class Consulta{
     public function excluir(){
         return (new DataBase('consulta'))->delete('id = '.(int)$this->id);
     }
-    // Lista as consultas já trazendo o nome do paciente e do dentista (JOIN)
-    public static function listar($where = null, $order = 'consulta.data_hora DESC', $limit = null){
-        $tabelas = 'consulta
-            INNER JOIN paciente ON consulta.paciente_id = paciente.id
-            INNER JOIN funcionario ON consulta.dentista_id = funcionario.id';
-        $campos = 'consulta.*, paciente.nome AS paciente_nome, funcionario.nome AS dentista_nome';
-        return (new DataBase($tabelas))->select($where, $order, $limit, $campos)->fetchAll(PDO::FETCH_CLASS, self::class);
+    public static function listar($where = null, $order = null, $limit = null){
+        $consultas = (new DataBase('consulta'))->select($where, $order, $limit);
+        foreach($consultas as $consulta){
+           $consulta->paciente = (new DataBase('paciente'))->select('id = '.$consulta->paciente_id)->fetchObject(PDO::FETCH_CLASS);
+           $consulta->dentista = (new DataBase('dentista'))->select('id = '.$consulta->dentista_id)->fetchObject(PDO::FETCH_CLASS);
+                
+            return $consultas->fetchAll(PDO::FETCH_CLASS, self::class);
+        }
     }
     public static function buscarPorId($id){
         return (new DataBase('consulta'))->select('id = '.(int)$id)->fetchObject(self::class);
